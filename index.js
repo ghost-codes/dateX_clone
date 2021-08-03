@@ -29,7 +29,7 @@ app.use(helmet());
 app.use(morgan("common"));
 
 app.use("/api/conversations", conversationsRoute);
-app.use("/api/auth",authroute)
+app.use("/api/auth", authroute)
 
 
 // MySql SetUp
