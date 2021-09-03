@@ -2,10 +2,10 @@ const { createPool } = require('mysql');
 
 const db = createPool({
     connectionLimit: 15,
-    host: 'mysql-39281-0.cloudclusters.net',
-    port: 39296,
+    host: 'mysql-46376-0.cloudclusters.net',
+    port: 19837,
     user: 'admin',
-    password: 'datex123',
+    password: 'YvgLsyIp',
     database: 'datex'
 });
 
