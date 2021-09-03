@@ -34,7 +34,7 @@ router.post('/signup', async (req, res) => {
         result => {
             const token = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "1h" });
             console.log("bcrypt ", result);
-            const sql = `INSERT INTO userAuth (user_id, username, email, passw) VALUES ('${user_id}','${body.username}', '${body.email}', '${result}')`
+            const sql = `INSERT INTO userAuth (user_id, name, email, password) VALUES ('${user_id}','${body.username}', '${body.email}', '${result}')`
             db.query(sql, (err, rows) => {
                 if (!err) {
                     res.status(200).json({
