@@ -33,7 +33,7 @@ router.post('/signup', async (req, res) => {
     bcrypt.hash(body.password, 10).then(
         result => {
             const token = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "1h" });
-            console.log("bcrypt ", result);
+
             const sql = `INSERT INTO userAuth (user_id, name, email, password) VALUES ('${user_id}','${body.username}', '${body.email}', '${result}')`
             db.query(sql, (err, rows) => {
                 if (!err) {
@@ -68,9 +68,11 @@ router.post('/login', async (req, res) => {
     db.query(sql, (err, rows) => {
         if (!err) {
             if (rows.length >= 1) {
-                bcrypt.compare(body.password, rows[0].passw, (err, result) => {
+                console.log(rows[0].password);
+                bcrypt.compare(body.password, rows[0].password, (err, result) => {
 
                     if (err) {
+                        console.log(err);
                         res.status(400).json({
                             err: err
                         })
