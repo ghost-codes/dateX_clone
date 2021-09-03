@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
     const user_id = uuidv4();
 
     const token = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "1h" });
-    const sql = `SELECT * FROM userAuth WHERE username = '${body.username}' OR email = '${body.email}'`
+    const sql = `SELECT * FROM userAuth WHERE name = '${body.username}' OR email = '${body.email}'`
     db.query(sql, (err, rows) => {
         if (!err) {
             if (rows.length >= 1) {
