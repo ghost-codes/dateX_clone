@@ -39,7 +39,7 @@ router.post('/signup', async (req, res) => {
 
     bcrypt.hash(body.password, 10).then(
         result => {
-            const token = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "1h" });
+            const token = jwt.sign({ username: body.username, user_id: user_id }, process.env.JWT_KEY, { expiresIn: "1h" });
 
             const refreshToken = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "300d" });
 
@@ -48,6 +48,11 @@ router.post('/signup', async (req, res) => {
                 if (!err) {
                     res.status(200).json({
                         message: "Authentication Succesful",
+                        user: {
+
+                            username: body.username,
+                            user_id: user_id,
+                        },
                         accessToken: token,
                         refreshToken: refreshToken,
                     });
@@ -109,7 +114,7 @@ router.post('/login', async (req, res) => {
 
     const user_id = uuidv4();
 
-    const token = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ username: body.identity, user_id: body.identity }, process.env.JWT_KEY, { expiresIn: "1h" });
     const sql = `SELECT * FROM userAuth WHERE name = '${body.identity}' OR email = '${body.identity}'`
     db.query(sql, (err, rows) => {
         if (!err) {
@@ -129,7 +134,6 @@ router.post('/login', async (req, res) => {
                             user: {
                                 username: rows[0].username,
                                 user_id: rows[0].user_id,
-
                             },
                             token: token,
                         });
