@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 //get convo of a user
 router.get('/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const sql = `SELECT * FROM conversations WHERE User_1 = "${userId}" OR User_2 = "${userId}"`;
+    const sql = `SELECT * FROM conversation WHERE User_1 = "${userId}" OR User_2 = "${userId}"`;
     console.log(userId);
     try {
         db.query(sql, (err, rows) => {
