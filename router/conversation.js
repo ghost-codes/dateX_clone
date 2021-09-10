@@ -29,7 +29,7 @@ router.get('/:userId', async (req, res) => {
     try {
         db.query(sql, (err, rows) => {
             if (!err) {
-                res.json(rows);
+                res.status(200).json(rows);
             } else {
                 res.status(500).json(err);
             }
