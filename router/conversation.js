@@ -13,10 +13,10 @@ router.post('/', async (req, res) => {
     ) `
     db.query(sql, (err, rows) => {
         if (!err) {
-            res.status(200).send(rows);
+            res.status(200).json(rows);
         } else {
             console.log(err);
-            res.status(500).send(err);
+            res.status(500).json(err);
         }
     })
 });
@@ -29,15 +29,15 @@ router.get('/:userId', async (req, res) => {
     try {
         db.query(sql, (err, rows) => {
             if (!err) {
-                res.send(rows);
+                res.json(rows);
             } else {
-                res.status(500).send(err);
+                res.status(500).json(err);
             }
         });
 
     } catch (err) {
 
-        res.status(500).send(err);
+        res.status(500).json(err);
     }
 })
 
