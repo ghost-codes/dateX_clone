@@ -115,6 +115,8 @@ router.post('/login', async (req, res) => {
     const user_id = uuidv4();
 
     const token = jwt.sign({ username: body.identity, user_id: body.identity }, process.env.JWT_KEY, { expiresIn: "1h" });
+    const refreshToken = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "300d" });
+
     const sql = `SELECT * FROM userAuth WHERE name = '${body.identity}' OR email = '${body.identity}'`
     db.query(sql, (err, rows) => {
         if (!err) {
@@ -135,7 +137,8 @@ router.post('/login', async (req, res) => {
                                 username: rows[0].username,
                                 user_id: rows[0].user_id,
                             },
-                            token: token,
+                            access_token: token,
+                            refresh_token: refreshToken,
                         });
                     } else {
                         res.status(401).json({

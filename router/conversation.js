@@ -8,8 +8,8 @@ router.post('/', async (req, res) => {
     const body = req.body;
 
     const conversation_id = uuidv4();
-    const sql = `INSERT INTO conversations ( conversation_id, user_one,user_two,conversation_type) VALUES(
-        "${conversation_id}", "${body.user_one}","${body.user_two}","message"
+    const sql = `INSERT INTO conversation ( conversation_id, User_1,User_2,conversation_type) VALUES(
+        "${conversation_id}", "${body.user_one}","${body.user_two}","${body.conversation_type}"
     ) `
     db.query(sql, (err, rows) => {
         if (!err) {
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 //get convo of a user
 router.get('/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const sql = `SELECT * FROM conversations WHERE user_one = "${userId}" OR user_two = "${userId}"`;
+    const sql = `SELECT * FROM conversations WHERE User_1 = "${userId}" OR User_2 = "${userId}"`;
     console.log(userId);
     try {
         db.query(sql, (err, rows) => {
