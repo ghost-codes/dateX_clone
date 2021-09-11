@@ -3,7 +3,21 @@ const { db } = require("../database/db");
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const upload = require('../middleware/upload');
 
+
+
+var run_query = function (db, sql) {
+    return new Promise(function (fulfill, reject) {
+        db.query(sql, (err, rows) => {
+            if (!err) {
+                fulfill(rows);
+            } else {
+                reject(err);
+            }
+        })
+    })
+}
 
 router.get('/users', (req, res) => {
     search = req.query.search
@@ -31,6 +45,31 @@ router.post('/users', async (req, res) => {
     Hash(salt + 'password')
 });
 
+
+router.post('/user/create_profile/', upload.single("profile_picture"), async (req, res) => {
+    const file = req.file;
+    const body = { ...req.body }
+
+    const profile_id = uuidv4();
+    const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number, login_status) 
+    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '${file.path}', '${body.phone_number}', '${0}')`
+
+    run_query(db, sql).then(result => {
+        const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}'`;
+        run_query(db, get_user_profile_sql).then(result => {
+            res.status(200).json(result[0]);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json(err);
+        })
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    })
+
+});
+
+
 router.post('/signup', async (req, res) => {
     const body = req.body;
 
@@ -39,18 +78,16 @@ router.post('/signup', async (req, res) => {
 
     bcrypt.hash(body.password, 10).then(
         result => {
-            const token = jwt.sign({ username: body.username, user_id: user_id }, process.env.JWT_KEY, { expiresIn: "1h" });
+            const token = jwt.sign({ user_id: user_id }, process.env.JWT_KEY, { expiresIn: "1h" });
 
-            const refreshToken = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "300d" });
+            const refreshToken = jwt.sign({ user_id: user_id }, process.env.JWT_KEY, { expiresIn: "300d" });
 
-            const sql = `INSERT INTO userAuth (user_id, name, email, password) VALUES ('${user_id}','${body.username}', '${body.email}', '${result}')`
+            const sql = `INSERT INTO userAuth (user_id, email, password) VALUES ('${user_id}', '${body.email}', '${result}')`
             db.query(sql, (err, rows) => {
                 if (!err) {
                     res.status(200).json({
                         message: "Authentication Succesful",
                         user: {
-
-                            username: body.username,
                             user_id: user_id,
                         },
                         accessToken: token,
@@ -59,7 +96,7 @@ router.post('/signup', async (req, res) => {
                 } else {
                     console.log(err);
                     res.status(500).json({
-                        err: err
+                        err: err.sqlMessage
                     });
                 }
             })
