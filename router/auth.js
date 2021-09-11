@@ -46,13 +46,13 @@ router.post('/users', async (req, res) => {
 });
 
 
-router.post('/user/create_profile/', upload.single("profile_picture"), async (req, res) => {
-    const file = req.file;
+router.post('/user/create_profile/', async (req, res) => {
+    // const file = req.file;
     const body = { ...req.body }
 
     const profile_id = uuidv4();
     const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number, login_status) 
-    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '${file.path}', '${body.phone_number}', '${0}')`
+    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '', '${body.phone_number}', '${0}')`
 
     run_query(db, sql).then(result => {
         const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}'`;
