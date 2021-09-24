@@ -19,30 +19,18 @@ var run_query = function (db, sql) {
     })
 }
 
-router.get('/users', (req, res) => {
-    search = req.query.search
+router.get('/users/search', (req, res) => {
+    const search = req.query.q
     console.log(search)
-    var searchUser = `SELECT * FROM userAuth WHERE (username LIKE '%${search}%') AND isDeleted='0' `
+    var searchUser = `SELECT * FROM user_profile WHERE (username LIKE '%${search}%')`
 
     db.query(searchUser, function (errQuery, resQuery) {
         if (errQuery) {
-            res.send(errQuery)
+            res.status(500).json(errQuery)
         } else {
-            res.send(resQuery[0])
+            res.status(200).json(resQuery)
         }
     })
-});
-router.post('/users', async (req, res) => {
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    } catch {
-        res.status(500).send()
-    }
-
-    const user = { name: req.body.name, password: req.body.password }
-    users.push(user)
-    res.status(201).send()
-    Hash(salt + 'password')
 });
 
 
@@ -154,7 +142,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ username: body.identity, user_id: body.identity }, process.env.JWT_KEY, { expiresIn: "1h" });
     const refreshToken = jwt.sign({ username: body.username, user_id: body.username }, process.env.JWT_KEY, { expiresIn: "300d" });
 
-    const sql = `SELECT * FROM userAuth WHERE name = '${body.identity}' OR email = '${body.identity}'`
+    const sql = `SELECT * FROM userAuth WHERE email = '${body.identity}'`
     db.query(sql, (err, rows) => {
         if (!err) {
             if (rows.length >= 1) {
