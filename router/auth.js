@@ -39,8 +39,8 @@ router.post('/user/create_profile/', async (req, res) => {
     const body = { ...req.body }
 
     const profile_id = uuidv4();
-    const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number, login_status) 
-    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '', '${body.phone_number}', '${0}')`
+    const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number) 
+    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '', '${body.phone_number}')`
 
     run_query(db, sql).then(result => {
         const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}'`;
