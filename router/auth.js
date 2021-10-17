@@ -96,6 +96,20 @@ router.post('/signup', async (req, res) => {
     });
 });
 
+router.get('/user/profile/:profileId', async (req, res) => {
+    const profile_id = req.params.profileId;
+
+
+    const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}' OR  user_id='${profile_id}'`;
+    run_query(db, get_user_profile_sql).then(result => {
+        res.status(200).json(result[0]);
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+
+})
+
 router.get('/refreshtoken', async (req, res) => {
     try {
         const refreshtoken = req.headers.authorization.split(" ")[1];
