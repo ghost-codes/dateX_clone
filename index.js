@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 
-app.use("/api/conversations", conversationsRoute);
+// app.use("/api/conversations", conversationsRoute);
 app.use("/api/auth", authroute)
 
 

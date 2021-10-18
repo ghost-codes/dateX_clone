@@ -108,7 +108,9 @@ router.get('/user/profile/:profileId', async (req, res) => {
         res.status(500).json(err);
     });
 
-})
+});
+
+
 
 router.get('/refreshtoken', async (req, res) => {
     try {

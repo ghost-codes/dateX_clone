@@ -74,6 +74,19 @@ var get_user = function (db, rows, userId) {
     });
 }
 
+router.post('/user/profile/random_user/', (req, res) => {
+    const profile = req.body.profile_id;
+    const gender = req.body.gender === 'M' ? 'F' : 'M';
+
+    const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id <> '${profile}' AND gender= '${gender}'`;
+    run_query(db, get_user_profile_sql).then(result => {
+
+        res.status(200).json(result[Math.floor(Math.random() * result.length)]);
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+});
 
 //new Conv
 router.post('/', async (req, res) => {
@@ -191,22 +204,6 @@ router.get('/:userId', async (req, res) => {
     // }
 })
 
-// router.get('/:userId', async (req, res) => {
-//     const userId = req.params.userId;
-//     const sql = `SELECT conversation.conversation_id,conversation_type,user_profile.all,user_profile.all
-//      FROM conversation 
-//      INNER JOIN user_profile ON conversation.User_1=user_profile.user_id
-
-//      WHERE conversation.User_1 = "${userId}" OR conversation.User_2 = "${userId}"`;
-
-//     run_query(db, sql).then((convos) => {
-//         console.log(convos);
-//     }).catch(err => {
-//         console.log(err)
-//     })
-
-
-// })
 
 
 module.exports = router;
