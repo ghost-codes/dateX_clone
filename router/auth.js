@@ -4,6 +4,9 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const upload = require('../middleware/upload');
+const fs = require('fs');
+const path = require('path');
+
 
 
 
@@ -34,26 +37,37 @@ router.get('/users/search', (req, res) => {
 });
 
 
-router.post('/user/create_profile/', async (req, res) => {
-    // const file = req.file;
+router.post('/user/create_profile/', upload.single('profile_picture'), async (req, res) => {
+    const file = req.file;
     const body = { ...req.body }
+    console.log(file.destination);
 
-    const profile_id = uuidv4();
-    const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number) 
-    VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '', '${body.phone_number}')`
+    const promise = fs.promises.readFile(path.join(file.destination, file.filename));
 
-    run_query(db, sql).then(result => {
-        const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}'`;
-        run_query(db, get_user_profile_sql).then(result => {
-            res.status(200).json(result[0]);
+    Promise.resolve(promise).then(function (buffer) {
+        let arrayBuffer = Uint8Array.from(buffer).buffer;
+
+        const profile_id = uuidv4();
+        const sql = `INSERT INTO user_profile (profile_id, user_id, username, gender, age, picture, phone_number) 
+        VALUES ("${profile_id}", "${body.user_id}", '${body.username}', '${body.gender}', '${body.age}', '${arrayBuffer}', '${body.phone_number}')`
+
+        run_query(db, sql).then(result => {
+            const get_user_profile_sql = `SELECT * FROM user_profile WHERE profile_id = '${profile_id}'`;
+            run_query(db, get_user_profile_sql).then(result => {
+                res.status(200).json(result[0]);
+            }).catch(err => {
+                console.log(err);
+                res.status(500).json(err);
+            })
         }).catch(err => {
             console.log(err);
             res.status(500).json(err);
         })
-    }).catch(err => {
+
+    }).catch((err) => {
         console.log(err);
-        res.status(500).json(err);
-    })
+    });
+
 
 });
 
