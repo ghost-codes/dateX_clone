@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     const messageId = uuidv4();
 
     const sql = `INSERT INTO messages ( message_id, conversation_id,sender_id,message,created_at) VALUES(
-        "${messageId}", "${body.conversationId}","${body.senderId}","${body.message},"${Date.now()}"
+        "${messageId}", "${body.conversationId}","${body.senderId}","${body.message}","${Date.now()}"
     ) `
     db.query(sql, (err, rows) => {
         if (!err) {
