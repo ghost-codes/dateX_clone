@@ -24,8 +24,8 @@ router.post('/', async (req, res) => {
 //get convo of a user
 router.get("/:conversationId", async (req, res) => {
     const conversationId = req.params.conversationId;
-    const sql = `SELECT * FROM message WHERE conversation_id = "${conversationId}"`;
-    console.log(conversationId);
+    const sql = `SELECT * FROM message WHERE conversation_id = "${conversationId}" ORDER BY created_at ASC`;
+
     try {
         db.query(sql, (err, rows) => {
             if (!err) {
