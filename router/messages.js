@@ -8,8 +8,8 @@ router.post('/', async (req, res) => {
     const body = req.body;
     const messageId = uuidv4();
 
-    const sql = `INSERT INTO message ( message_id, conversation_id,sender_id,message,created_at) VALUES(
-        "${messageId}", "${body.conversationId}","${body.senderId}","${body.message}","${Date.now()}"
+    const sql = `INSERT INTO message ( message_id, conversation_id,sender_id,message) VALUES(
+        "${messageId}", "${body.conversationId}","${body.senderId}","${body.message}"
     ) `
     db.query(sql, (err, rows) => {
         if (!err) {
